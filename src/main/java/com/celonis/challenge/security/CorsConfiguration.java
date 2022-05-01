@@ -1,6 +1,7 @@
 package com.celonis.challenge.security;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -10,6 +11,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 public class CorsConfiguration extends WebMvcConfigurerAdapter {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**").allowedMethods("DELETE", "POST", "GET", "PUT");
+        registry
+                .addMapping("/**")
+                .allowedMethods(HttpMethod.GET.name(), HttpMethod.POST.name(),
+                        HttpMethod.PUT.name(), HttpMethod.DELETE.name());
     }
 }

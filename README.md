@@ -1,27 +1,6 @@
 # Celonis Programming Challenge
 
-Dear applicant,
-
-Congratulations, you made it to the Celonis Programming Challenge!
-
-The challenge itself should be timeboxed to 3 hours. This means you should not work longer than that on the completion.
-If you can't make all points within the timeframe this is _not_ an issue. We will be happy to discuss any problems and ideas during the Challenge Interview.
-
-Why do we ask you to complete this challenge?
-
-First of all, we need to have some way of comparing different applicants, and we try to answer certain questions which
-we cannot out-right ask in an interview - also we don't want to ask too many technical questions
-in a face-to-face interview to not be personally biased in a potentially stressful situation.
-To be as transparent as possible, we want to give you some insights into what we look at and how we evaluate.
-This challenge gives you the possibility to shine :)
-
-Note that there is nothing wrong with googling when you have certain questions or are unsure about some APIs,
-but you should not outright copy code. If you decide to copy code, please mark it as such, citing the source.
-
 ## Complete and extend a java application
-
-For this challenge, you have received a project which has a few problems.
-You first have to fix those problems in order to get the application running, and then you should extend it with the requirements below.
 
 What we are looking into:
   - Understanding and implementation of a specification
