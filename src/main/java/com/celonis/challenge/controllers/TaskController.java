@@ -15,7 +15,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/tasks")
 public class TaskController {
-
     private final TaskService taskService;
 
     private final FileService fileService;
@@ -58,6 +57,18 @@ public class TaskController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void executeTask(@PathVariable String taskId) {
         taskService.executeTask(taskId);
+    }
+
+    @PostMapping("/{taskId}/triggerExecution")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void triggerTaskExecution(@PathVariable String taskId) {
+        taskService.triggerTaskExecution(taskId);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @GetMapping("/{taskId}/executionStatus")
+    public ProjectGenerationTask getExecutionStatus(@PathVariable String taskId) {
+        return taskService.getExecutionStatus(taskId);
     }
 
     @GetMapping("/{taskId}/result")

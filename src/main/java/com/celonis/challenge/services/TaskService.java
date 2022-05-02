@@ -4,6 +4,8 @@ import com.celonis.challenge.exceptions.InternalException;
 import com.celonis.challenge.exceptions.NotFoundException;
 import com.celonis.challenge.model.ProjectGenerationTask;
 import com.celonis.challenge.model.ProjectGenerationTaskRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,9 +13,14 @@ import java.net.URL;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class TaskService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TaskService.class);
+    @Autowired
+    private AsyncService asyncService;
+
     @Autowired
     private ProjectGenerationTaskRepository projectGenerationTaskRepository;
     @Autowired
@@ -59,5 +66,17 @@ public class TaskService {
     private ProjectGenerationTask get(String taskId) {
         Optional<ProjectGenerationTask> projectGenerationTask = projectGenerationTaskRepository.findById(taskId);
         return projectGenerationTask.orElseThrow(NotFoundException::new);
+    }
+
+    public CompletableFuture<ProjectGenerationTask> triggerTaskExecution(String taskId) {
+        try {
+            return asyncService.triggerTaskExecution(get(taskId));
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public ProjectGenerationTask getExecutionStatus(String taskId) {
+        return null;
     }
 }
