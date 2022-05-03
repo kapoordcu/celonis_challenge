@@ -4,6 +4,7 @@ import com.celonis.challenge.exceptions.InternalException;
 import com.celonis.challenge.exceptions.NotFoundException;
 import com.celonis.challenge.model.ProjectGenerationTask;
 import com.celonis.challenge.model.ProjectGenerationTaskRepository;
+import com.celonis.challenge.model.TaskStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,11 +73,16 @@ public class TaskService {
         try {
             return asyncService.triggerTaskExecution(get(taskId));
         } catch (InterruptedException e) {
+            LOGGER.error("The task with uuid '{}' was interrupted", taskId);
             throw new RuntimeException(e);
         }
     }
 
     public ProjectGenerationTask getExecutionStatus(String taskId) {
         return null;
+    }
+
+    public void cancel(String taskId) {
+
     }
 }

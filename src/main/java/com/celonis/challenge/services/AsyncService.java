@@ -24,12 +24,16 @@ public class AsyncService {
         LOGGER.info("Task submitted for execution with uuid '{}' started with x= {} and y= {} ",
                 generationTask.getId(), generationTask.getX(), generationTask.getY());
         generationTask.setTaskStatus(TaskStatus.IN_EXECUTION);
+        Timer timer = new Timer();
         while (generationTask.getX() != generationTask.getY()) {
-            new Timer().scheduleAtFixedRate(new TimerTask() {
+
+            TimerTask timerTask = new TimerTask() {
+                @Override
                 public void run() {
                     generationTask.setX(generationTask.getX() + 1);
-                }
-            }, 0, timeIncrementFrequency);
+                };
+            };
+            timer.scheduleAtFixedRate(timerTask, 0, timeIncrementFrequency);
         }
         return CompletableFuture.completedFuture(generationTask);
     }
