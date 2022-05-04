@@ -1,0 +1,132 @@
+{
+	"info": {
+		"_postman_id": "80f19710-357b-4e8b-b71c-51b279a8d90e",
+		"name": "push",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "[POST] Create Task",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Celonis-Auth",
+						"value": "totally_secret",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\" : \"t1\",\n    \"x\" : 20,\n    \"y\": 40\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/tasks/",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"tasks",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[GET] Find Task",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Celonis-Auth",
+						"value": "totally_secret",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "localhost:8080/api/tasks/cded9bf9-5c49-4bb2-8e69-6c3b9faf52e3",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"tasks",
+						"cded9bf9-5c49-4bb2-8e69-6c3b9faf52e3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[GET] Find ALL Tasks",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Celonis-Auth",
+						"value": "totally_secret",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "localhost:8080/api/tasks/",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"tasks",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Trigger Execution",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Celonis-Auth",
+						"value": "totally_secret",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/tasks/41d90dc3-fe57-4e84-b9af-c9fb2582feb5/triggerExecution",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"tasks",
+						"41d90dc3-fe57-4e84-b9af-c9fb2582feb5",
+						"triggerExecution"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

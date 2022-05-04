@@ -67,15 +67,7 @@ public class TaskController {
     @PostMapping("/{taskId}/triggerExecution")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void triggerTaskExecution(@PathVariable String taskId) {
-        try {
-            CompletableFuture<ProjectGenerationTask> projectGenerationTaskCompletableFuture = taskService.triggerTaskExecution(taskId);
-            CompletableFuture.allOf(projectGenerationTaskCompletableFuture).join();
-            projectGenerationTaskCompletableFuture.get().setTaskStatus(TaskStatus.COMPLETED);
-            taskService.update(taskId, projectGenerationTaskCompletableFuture.get());
-        } catch (InterruptedException | ExecutionException e) {
-            LOGGER.error("The task with uuid '{}' was interrupted", taskId);
-            throw new RuntimeException(e);
-        }
+        taskService.triggerTaskExecution(taskId);
     }
 
     @DeleteMapping("/{taskId}/cancelTask")

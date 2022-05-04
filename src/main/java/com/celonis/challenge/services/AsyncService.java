@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class AsyncService {
@@ -23,18 +24,21 @@ public class AsyncService {
     public CompletableFuture<ProjectGenerationTask> triggerTaskExecution(ProjectGenerationTask generationTask) throws InterruptedException {
         LOGGER.info("Task submitted for execution with uuid '{}' started with x= {} and y= {} ",
                 generationTask.getId(), generationTask.getX(), generationTask.getY());
-        generationTask.setTaskStatus(TaskStatus.IN_EXECUTION);
+        AtomicInteger variableX = new AtomicInteger(generationTask.getX());
         Timer timer = new Timer();
-        while (generationTask.getX() != generationTask.getY()) {
-
-            TimerTask timerTask = new TimerTask() {
-                @Override
-                public void run() {
-                    generationTask.setX(generationTask.getX() + 1);
-                };
-            };
-            timer.scheduleAtFixedRate(timerTask, 0, timeIncrementFrequency);
-        }
+        timer.schedule(new TimerTask() {
+            int counter = variableX.get();
+            @Override
+            public void run() {
+                generationTask.setX(variableX.getAndIncrement());
+                counter++;
+                if (counter >= (generationTask.getY())- variableX.get()){
+                    generationTask.setX(generationTask.getY());
+                    generationTask.setTaskStatus(TaskStatus.COMPLETED);
+                    timer.cancel();
+                }
+            }
+        }, 0, timeIncrementFrequency);
         return CompletableFuture.completedFuture(generationTask);
     }
 

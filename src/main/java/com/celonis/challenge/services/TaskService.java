@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @Service
 public class TaskService {
@@ -71,7 +72,18 @@ public class TaskService {
 
     public CompletableFuture<ProjectGenerationTask> triggerTaskExecution(String taskId) {
         try {
-            return asyncService.triggerTaskExecution(get(taskId));
+            ProjectGenerationTask generationTask = get(taskId);
+            generationTask.setTaskStatus(TaskStatus.IN_EXECUTION);
+            projectGenerationTaskRepository.save(generationTask);
+            CompletableFuture<ProjectGenerationTask> projectGenerationTaskCompletableFuture = asyncService.triggerTaskExecution(generationTask);
+            try {
+                if(projectGenerationTaskCompletableFuture.get() != null) {
+                    projectGenerationTaskRepository.save(projectGenerationTaskCompletableFuture.get());
+                }
+            } catch (ExecutionException e) {
+                throw new RuntimeException(e);
+            }
+            return projectGenerationTaskCompletableFuture;
         } catch (InterruptedException e) {
             LOGGER.error("The task with uuid '{}' was interrupted", taskId);
             throw new RuntimeException(e);
