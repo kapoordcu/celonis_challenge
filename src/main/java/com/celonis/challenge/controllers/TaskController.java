@@ -1,7 +1,6 @@
 package com.celonis.challenge.controllers;
 
 import com.celonis.challenge.model.ProjectGenerationTask;
-import com.celonis.challenge.model.TaskStatus;
 import com.celonis.challenge.services.FileService;
 import com.celonis.challenge.services.TaskService;
 import org.slf4j.Logger;
@@ -14,8 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -58,33 +55,31 @@ public class TaskController {
         taskService.delete(taskId);
     }
 
+    @GetMapping("/{taskId}/result")
+    public ResponseEntity<FileSystemResource> getResult(@PathVariable String taskId) {
+        return fileService.getTaskResult(taskId);
+    }
+
     @PostMapping("/{taskId}/execute")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void executeTask(@PathVariable String taskId) {
         taskService.executeTask(taskId);
     }
 
-    @PostMapping("/{taskId}/triggerExecution")
+    @PostMapping("/{taskId}/triggerTaskCounter")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void triggerTaskExecution(@PathVariable String taskId) {
         taskService.triggerTaskExecution(taskId);
     }
 
-    @DeleteMapping("/{taskId}/cancelTask")
+    @PostMapping("/{taskId}/cancelTaskCounter")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void cancelTask(@PathVariable String taskId) {
         taskService.cancel(taskId);
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @GetMapping("/{taskId}/executionStatus")
+    @GetMapping("/{taskId}/statusTaskCounter")
     public ProjectGenerationTask getExecutionStatus(@PathVariable String taskId) {
         return taskService.getExecutionStatus(taskId);
     }
-
-    @GetMapping("/{taskId}/result")
-    public ResponseEntity<FileSystemResource> getResult(@PathVariable String taskId) {
-        return fileService.getTaskResult(taskId);
-    }
-
 }

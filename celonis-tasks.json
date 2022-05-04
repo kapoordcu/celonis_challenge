@@ -93,7 +93,7 @@
 			"response": []
 		},
 		{
-			"name": "Trigger Execution",
+			"name": "[POST] Trigger Task Counter Execution",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -113,7 +113,7 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/api/tasks/41d90dc3-fe57-4e84-b9af-c9fb2582feb5/triggerExecution",
+					"raw": "localhost:8080/api/tasks/0eb0d379-dc0e-4a47-bad4-fb67c6c6c335/triggerTaskCounter",
 					"host": [
 						"localhost"
 					],
@@ -121,8 +121,71 @@
 					"path": [
 						"api",
 						"tasks",
-						"41d90dc3-fe57-4e84-b9af-c9fb2582feb5",
-						"triggerExecution"
+						"0eb0d379-dc0e-4a47-bad4-fb67c6c6c335",
+						"triggerTaskCounter"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[POST] Cancel Task Counter Execution",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Celonis-Auth",
+						"value": "totally_secret",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/tasks/0eb0d379-dc0e-4a47-bad4-fb67c6c6c335/cancelTask",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"tasks",
+						"0eb0d379-dc0e-4a47-bad4-fb67c6c6c335",
+						"cancelTask"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[GET] Status Task Counter Execution",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Celonis-Auth",
+						"value": "totally_secret",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "localhost:8080/api/tasks/0eb0d379-dc0e-4a47-bad4-fb67c6c6c335/statusTaskCounter",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"tasks",
+						"0eb0d379-dc0e-4a47-bad4-fb67c6c6c335",
+						"statusTaskCounter"
 					]
 				}
 			},

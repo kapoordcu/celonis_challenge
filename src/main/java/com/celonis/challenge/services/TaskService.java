@@ -13,8 +13,10 @@ import org.springframework.stereotype.Service;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 
 @Service
@@ -22,6 +24,7 @@ public class TaskService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskService.class);
     @Autowired
     private AsyncService asyncService;
+    private Map<String, CompletableFuture<ProjectGenerationTask>> completableFutureMap = new ConcurrentHashMap<>();
 
     @Autowired
     private ProjectGenerationTaskRepository projectGenerationTaskRepository;
@@ -46,6 +49,9 @@ public class TaskService {
         ProjectGenerationTask existing = get(taskId);
         existing.setCreationDate(projectGenerationTask.getCreationDate());
         existing.setName(projectGenerationTask.getName());
+        existing.setX(projectGenerationTask.getX());
+        existing.setY(projectGenerationTask.getY());
+        existing.setTaskStatus(projectGenerationTask.getTaskStatus());
         return projectGenerationTaskRepository.save(existing);
     }
 
@@ -75,7 +81,9 @@ public class TaskService {
             ProjectGenerationTask generationTask = get(taskId);
             generationTask.setTaskStatus(TaskStatus.IN_EXECUTION);
             projectGenerationTaskRepository.save(generationTask);
+
             CompletableFuture<ProjectGenerationTask> projectGenerationTaskCompletableFuture = asyncService.triggerTaskExecution(generationTask);
+            completableFutureMap.putIfAbsent(taskId, projectGenerationTaskCompletableFuture);
             try {
                 if(projectGenerationTaskCompletableFuture.get() != null) {
                     projectGenerationTaskRepository.save(projectGenerationTaskCompletableFuture.get());
@@ -91,10 +99,34 @@ public class TaskService {
     }
 
     public ProjectGenerationTask getExecutionStatus(String taskId) {
-        return null;
+        ProjectGenerationTask inquiredTask = null;
+        try {
+            if(completableFutureMap.containsKey(taskId)) {
+                CompletableFuture<ProjectGenerationTask> submittedThreadpoolTask = completableFutureMap.get(taskId);
+                inquiredTask = submittedThreadpoolTask.get();
+            }
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+        return inquiredTask;
     }
 
     public void cancel(String taskId) {
+        try {
+            if(completableFutureMap.containsKey(taskId)) {
+                CompletableFuture<ProjectGenerationTask> submittedThreadpoolTask = completableFutureMap.get(taskId);
+                submittedThreadpoolTask.cancel(true);
+                ProjectGenerationTask cancellableTask = submittedThreadpoolTask.get();
+                cancellableTask.setTaskStatus(TaskStatus.CANCELLED);
+                update(taskId, cancellableTask);
+            }
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 }
