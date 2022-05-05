@@ -37,8 +37,8 @@
 
 ### How can someone monitor the progress of the task
 Whenever the task is running , the x parameter is being incremented every second , so an api call to `/v2/api/tasks/status/{taskId}` will return the status
-### Design Consideration/Decisions
-
+### Cleanup Job
+Scheduled task run every month 1st day at 12 AM using cron expression
 ### Demo
 Stay tuned !!
 
