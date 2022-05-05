@@ -78,55 +78,55 @@ public class TaskService {
 
     public CompletableFuture<ProjectGenerationTask> triggerTaskExecution(String taskId) {
         try {
-            ProjectGenerationTask generationTask = get(taskId);
-            generationTask.setTaskStatus(TaskStatus.IN_EXECUTION);
-            projectGenerationTaskRepository.save(generationTask);
-
-            CompletableFuture<ProjectGenerationTask> projectGenerationTaskCompletableFuture = asyncService.triggerTaskExecution(generationTask);
-            completableFutureMap.putIfAbsent(taskId, projectGenerationTaskCompletableFuture);
-            try {
-                if(projectGenerationTaskCompletableFuture.get() != null) {
-                    projectGenerationTaskRepository.save(projectGenerationTaskCompletableFuture.get());
-                }
-            } catch (ExecutionException e) {
-                throw new RuntimeException(e);
-            }
-            return projectGenerationTaskCompletableFuture;
-        } catch (InterruptedException e) {
-            LOGGER.error("The task with uuid '{}' was interrupted", taskId);
+            ProjectGenerationTask task = get(taskId);
+            LOGGER.info("Task submitted for execution with uuid '{}' started with x= {} and y= {} ",
+                    task.getId(), task.getX(), task.getY());
+            saveExecutionStatusInDB(task);
+            CompletableFuture<ProjectGenerationTask> taskCompletableFuture = asyncService.triggerTaskExecution(task);
+            completableFutureMap.putIfAbsent(taskId, taskCompletableFuture);
+            Optional.ofNullable(taskCompletableFuture.get())
+                    .ifPresentOrElse(taskGet -> projectGenerationTaskRepository.save(taskGet), NotFoundException::new);
+            return taskCompletableFuture;
+        } catch (InterruptedException | ExecutionException e) {
+            LOGGER.error("Task Execution API error: The task with uuid '{}' was interrupted", taskId);
             throw new RuntimeException(e);
         }
     }
 
+    private void saveExecutionStatusInDB(ProjectGenerationTask generationTask) {
+        generationTask.setTaskStatus(TaskStatus.IN_EXECUTION);
+        projectGenerationTaskRepository.save(generationTask);
+    }
+
     public ProjectGenerationTask getExecutionStatus(String taskId) {
-        ProjectGenerationTask inquiredTask = null;
+        ProjectGenerationTask enquiredTask = null;
         try {
             if(completableFutureMap.containsKey(taskId)) {
+                LOGGER.info("Running Task status is requested with uuid '{}' ", taskId);
                 CompletableFuture<ProjectGenerationTask> submittedThreadpoolTask = completableFutureMap.get(taskId);
-                inquiredTask = submittedThreadpoolTask.get();
+                enquiredTask = submittedThreadpoolTask.get();
             }
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
+            LOGGER.error("Task ExecutionStatus API error: The task with uuid '{}' was interrupted", taskId);
             throw new RuntimeException(e);
         }
-        return inquiredTask;
+        return enquiredTask;
     }
 
     public void cancel(String taskId) {
         try {
             if(completableFutureMap.containsKey(taskId)) {
-                CompletableFuture<ProjectGenerationTask> submittedThreadpoolTask = completableFutureMap.get(taskId);
-                submittedThreadpoolTask.cancel(true);
-                ProjectGenerationTask cancellableTask = submittedThreadpoolTask.get();
-                cancellableTask.setTaskStatus(TaskStatus.CANCELLED);
-                update(taskId, cancellableTask);
+                LOGGER.info("Task requested to be cancelled uuid '{}' ", taskId);
+                CompletableFuture<ProjectGenerationTask> submittedTask = completableFutureMap.get(taskId);
+                submittedTask.cancel(true);
+                Optional.ofNullable(submittedTask.get()).ifPresentOrElse(task -> {
+                    task.setTaskStatus(TaskStatus.CANCELLED);
+                    update(taskId, task);
+                }, NotFoundException::new);
             }
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
+            LOGGER.error("Task Cancel API error: The task with uuid '{}' could not be cancelled", taskId);
             throw new RuntimeException(e);
         }
-
     }
 }

@@ -15,31 +15,32 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class AsyncService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AsyncService.class);
 
     @Value("${celonis.time.increment.frequency}")
     private int timeIncrementFrequency;
 
     @Async("asyncExecutor")
-    public CompletableFuture<ProjectGenerationTask> triggerTaskExecution(ProjectGenerationTask generationTask) throws InterruptedException {
-        LOGGER.info("Task submitted for execution with uuid '{}' started with x= {} and y= {} ",
-                generationTask.getId(), generationTask.getX(), generationTask.getY());
-        AtomicInteger variableX = new AtomicInteger(generationTask.getX());
+    public CompletableFuture<ProjectGenerationTask> triggerTaskExecution(ProjectGenerationTask submittedTask) throws InterruptedException {
+        startCounterByTimer(submittedTask);
+        return CompletableFuture.completedFuture(submittedTask);
+    }
+
+    private void startCounterByTimer(ProjectGenerationTask submittedTask) {
+        AtomicInteger variableX = new AtomicInteger(submittedTask.getX());
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             int counter = variableX.get();
             @Override
             public void run() {
-                generationTask.setX(variableX.getAndIncrement());
+                submittedTask.setX(variableX.getAndIncrement());
                 counter++;
-                if (counter >= (generationTask.getY())- variableX.get()){
-                    generationTask.setX(generationTask.getY());
-                    generationTask.setTaskStatus(TaskStatus.COMPLETED);
+                if (counter >= (submittedTask.getY())- variableX.get()){
+                    submittedTask.setX(submittedTask.getY());
+                    submittedTask.setTaskStatus(TaskStatus.COMPLETED);
                     timer.cancel();
                 }
             }
         }, 0, timeIncrementFrequency);
-        return CompletableFuture.completedFuture(generationTask);
     }
 
 }

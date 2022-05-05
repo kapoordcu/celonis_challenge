@@ -34,7 +34,7 @@ public class SimpleHeaderFilter extends OncePerRequestFilter {
         String val = request.getHeader(authHeader);
         if (val == null || !val.equals(secretApiKey)) {
             response.setStatus(401);
-            response.getWriter().append("Not authorized to execute, Make sure you provide secret header");
+            response.getWriter().append("Not authorized to execute, Provide right credentials");
             return;
         }
         filterChain.doFilter(request, response);
