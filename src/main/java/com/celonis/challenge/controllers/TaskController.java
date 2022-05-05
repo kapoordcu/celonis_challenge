@@ -3,8 +3,6 @@ package com.celonis.challenge.controllers;
 import com.celonis.challenge.model.ProjectGenerationTask;
 import com.celonis.challenge.services.FileService;
 import com.celonis.challenge.services.TaskService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
@@ -15,9 +13,8 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/tasks")
+@RequestMapping
 public class TaskController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TaskController.class);
     private final TaskService taskService;
     private final FileService fileService;
 
@@ -28,57 +25,57 @@ public class TaskController {
         this.fileService = fileService;
     }
 
-    @GetMapping("/")
+    @GetMapping("/v1/api/tasks")
     public List<ProjectGenerationTask> listTasks() {
         return taskService.listTasks();
     }
 
-    @PostMapping("/")
+    @PostMapping("/v1/api/tasks")
     public ProjectGenerationTask createTask(@RequestBody @Valid ProjectGenerationTask projectGenerationTask) {
         return taskService.createTask(projectGenerationTask);
     }
 
-    @GetMapping("/{taskId}")
+    @GetMapping("/v1/api/tasks/{taskId}")
     public ProjectGenerationTask getTask(@PathVariable String taskId) {
         return taskService.getTask(taskId);
     }
 
-    @PutMapping("/{taskId}")
+    @PutMapping("/v1/api/tasks/{taskId}")
     public ProjectGenerationTask updateTask(@PathVariable String taskId,
                                             @RequestBody @Valid ProjectGenerationTask projectGenerationTask) {
         return taskService.update(taskId, projectGenerationTask);
     }
 
-    @DeleteMapping("/{taskId}/delete")
+    @DeleteMapping("/v1/api/tasks/{taskId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteTask(@PathVariable String taskId) {
         taskService.delete(taskId);
     }
 
-    @GetMapping("/{taskId}/result")
+    @GetMapping("/v1/api/tasks/result/{taskId}")
     public ResponseEntity<FileSystemResource> getResult(@PathVariable String taskId) {
         return fileService.getTaskResult(taskId);
     }
 
-    @PostMapping("/{taskId}/execute")
+    @PostMapping("/v1/api/tasks/execute/{taskId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void executeTask(@PathVariable String taskId) {
         taskService.executeTask(taskId);
     }
 
-    @PostMapping("/{taskId}/triggerTaskCounter")
+    @PostMapping("/v2/api/tasks/execute/{taskId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void triggerTaskExecution(@PathVariable String taskId) {
+    public void triggerExecution(@PathVariable String taskId) {
         taskService.triggerTaskExecution(taskId);
     }
 
-    @PostMapping("/{taskId}/cancelTaskCounter")
+    @PostMapping("/v2/api/tasks/cancel/{taskId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void cancelTask(@PathVariable String taskId) {
-        taskService.cancel(taskId);
+    public void cancelTaskExecution(@PathVariable String taskId) {
+        taskService.cancelTaskExecution(taskId);
     }
 
-    @GetMapping("/{taskId}/statusTaskCounter")
+    @GetMapping("/v2/api/tasks/status/{taskId}")
     public ProjectGenerationTask getExecutionStatus(@PathVariable String taskId) {
         return taskService.getExecutionStatus(taskId);
     }

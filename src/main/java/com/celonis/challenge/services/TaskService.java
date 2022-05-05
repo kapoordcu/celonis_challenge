@@ -113,7 +113,7 @@ public class TaskService {
         return enquiredTask;
     }
 
-    public void cancel(String taskId) {
+    public void cancelTaskExecution(String taskId) {
         try {
             if(completableFutureMap.containsKey(taskId)) {
                 LOGGER.info("Task requested to be cancelled uuid '{}' ", taskId);

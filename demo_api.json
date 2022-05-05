@@ -6,6 +6,33 @@
 	},
 	"item": [
 		{
+			"name": "[GET] Find ALL Tasks",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Celonis-Auth",
+						"value": "totally_secret",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "localhost:8080/v1/api/tasks/",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"api",
+						"tasks",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "[POST] Create Task",
 			"request": {
 				"method": "POST",
@@ -18,7 +45,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"name\" : \"t1\",\n    \"x\" : 20,\n    \"y\": 40\n}",
+					"raw": "{\n    \"name\" : \"t1\",\n    \"x\" : 20,\n    \"y\": 200\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -26,15 +53,15 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/api/tasks/",
+					"raw": "localhost:8080/v1/api/tasks",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
+						"v1",
 						"api",
-						"tasks",
-						""
+						"tasks"
 					]
 				}
 			},
@@ -52,24 +79,68 @@
 					}
 				],
 				"url": {
-					"raw": "localhost:8080/api/tasks/cded9bf9-5c49-4bb2-8e69-6c3b9faf52e3",
+					"raw": "localhost:8080/v1/api/tasks/{taskId}",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
+						"v1",
 						"api",
 						"tasks",
-						"cded9bf9-5c49-4bb2-8e69-6c3b9faf52e3"
+						"{taskId}"
+					],
+					"query": [
+						{
+							"key": null,
+							"value": "BR_A_",
+							"disabled": true
+						}
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "[GET] Find ALL Tasks",
+			"name": "[PUT] Update Task",
 			"request": {
-				"method": "GET",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Celonis-Auth",
+						"value": "totally_secret",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\" : \"t331\",\n    \"x\" : 50,\n    \"y\": 200\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/v1/api/tasks/{{taskId}}",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"api",
+						"tasks",
+						"{{taskId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[DELETE] Delete Task",
+			"request": {
+				"method": "DELETE",
 				"header": [
 					{
 						"key": "Celonis-Auth",
@@ -78,22 +149,23 @@
 					}
 				],
 				"url": {
-					"raw": "localhost:8080/api/tasks/",
+					"raw": "localhost:8080/v1/api/tasks/{{taskId}}",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
+						"v1",
 						"api",
 						"tasks",
-						""
+						"{{taskId}}"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "[POST] Trigger Task Counter Execution",
+			"name": "[POST] Trigger Execution",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -113,23 +185,24 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/api/tasks/0eb0d379-dc0e-4a47-bad4-fb67c6c6c335/triggerTaskCounter",
+					"raw": "localhost:8080/v2/api/tasks/execute/{{taskId}}",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
+						"v2",
 						"api",
 						"tasks",
-						"0eb0d379-dc0e-4a47-bad4-fb67c6c6c335",
-						"triggerTaskCounter"
+						"execute",
+						"{{taskId}}"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "[POST] Cancel Task Counter Execution",
+			"name": "[POST] Cancel Execution",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -149,23 +222,24 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/api/tasks/0eb0d379-dc0e-4a47-bad4-fb67c6c6c335/cancelTask",
+					"raw": "localhost:8080/v2/api/tasks/cancel/{{taskId}}",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
+						"v2",
 						"api",
 						"tasks",
-						"0eb0d379-dc0e-4a47-bad4-fb67c6c6c335",
-						"cancelTask"
+						"cancel",
+						"{{taskId}}"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "[GET] Status Task Counter Execution",
+			"name": "[GET] Execution Status",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -176,16 +250,17 @@
 					}
 				],
 				"url": {
-					"raw": "localhost:8080/api/tasks/0eb0d379-dc0e-4a47-bad4-fb67c6c6c335/statusTaskCounter",
+					"raw": "localhost:8080/v2/api/tasks/status/{{taskId}}",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
+						"v2",
 						"api",
 						"tasks",
-						"0eb0d379-dc0e-4a47-bad4-fb67c6c6c335",
-						"statusTaskCounter"
+						"status",
+						"{{taskId}}"
 					]
 				}
 			},

@@ -2,8 +2,6 @@ package com.celonis.challenge.services;
 
 import com.celonis.challenge.model.ProjectGenerationTask;
 import com.celonis.challenge.model.TaskStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
